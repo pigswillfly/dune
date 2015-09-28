@@ -8,3 +8,17 @@ private/
 *.mo
 CMakeLists.txt.user
 user/
+
+*.[oa]
+*~
+*.cmake
+*.md
+
+src/HelloWorld/*
+src/Tutorials/*
+etc/development/consumer.ini
+etc/development/producer.ini
+etc/development/prodcon.ini
+
+
+

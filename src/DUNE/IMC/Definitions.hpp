@@ -19140,6 +19140,71 @@ namespace DUNE
         return 0;
       }
     };
+
+    //! Thermal Camera Control
+    class ThermalCamCommand: public Message
+    {
+    public:
+      //! Command function
+      uint8_t command;
+      //! Data
+      std::vector<char> args;
+
+      static uint16_t
+      getIdStatic(void)
+      {
+        return 1998;
+      }
+
+      ThermalCamCommand(void);
+
+      Message*
+      clone(void) const
+      {
+        return new ThermalCamCommand(*this);
+      }
+
+      void
+      clear(void);
+
+      bool
+      fieldsEqual(const Message& msg__) const;
+
+      uint8_t*
+      serializeFields(uint8_t* bfr__) const;
+
+      uint16_t
+      deserializeFields(const uint8_t* bfr__, uint16_t size__);
+
+      uint16_t
+      getId(void) const
+      {
+        return ThermalCamCommand::getIdStatic();
+      }
+
+      const char*
+      getName(void) const
+      {
+        return "ThermalCamCommand";
+      }
+
+      unsigned
+      getFixedSerializationSize(void) const
+      {
+        return 1;
+      }
+
+      unsigned
+      getVariableSerializationSize(void) const
+      {
+        return IMC::getSerializationSize(args);
+      }
+
+      void
+      fieldsToJSON(std::ostream& os__, unsigned nindent__) const;
+
+    };
+
   }
 }
 

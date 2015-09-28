@@ -19988,5 +19988,78 @@ namespace DUNE
       (void)size__;
       return 0;
     }
+
+	ThermalCamCommand::ThermalCamCommand(void)
+	{
+	  m_header.mgid = 1991;
+	  clear();
+	}
+
+	void
+	ThermalCamCommand::clear(void)
+	{
+	  processCode = 0;
+	  status = 0;
+	  function = 0;
+	  byteCount = 0;
+	  crc1 = 0;
+	  args.clear();
+	  crc2 = 0;
+	}
+
+	bool
+	ThermalCamCommand::fieldsEqual(const Message& msg__) const
+	{
+	  const IMC::ThermalCamCommand& other__ = static_cast<const ThermalCamCommand&>(msg__);
+	  if (process != other__.processCode) return false;
+	  if (status != other__.status) return false;
+	  if (function != other__.function) return false;
+	  if (byteCount != other__.byteCount) return false;
+	  if (crc1 != other__.crc1) return false;
+	  if (args != other__.args) return false;
+	  if (crc2 != other__.crc2) return false;
+	  return true;
+	}
+
+	uint8_t*
+	ThermalCamCommand::serializeFields(uint8_t* bfr__) const
+	{
+	  uint8_t* ptr__ = bfr__;
+	  ptr__ += IMC::serialize(processCode, ptr__);
+	  ptr__ += IMC::serialize(status, ptr__);
+	  ptr__ += IMC::serialize(function, ptr__);
+	  ptr__ += IMC::serialize(byteCount, ptr__);
+	  ptr__ += IMC::serialize(crc1, ptr__);
+	  ptr__ += IMC::serialize(args, ptr__);
+	  ptr__ += IMC::serialize(crc2, ptr__);
+	  return ptr__;
+	}
+
+	uint16_t
+	ThermalCamCommand::deserializeFields(const uint8_t* bfr__, uint16_t size__)
+	{
+	  const uint8_t* start__ = bfr__;
+	  bfr__ += IMC::deserialize(processCode, bfr__, size__);
+	  bfr__ += IMC::deserialize(status, bfr__, size__);
+	  bfr__ += IMC::deserialize(function, bfr__, size__);
+	  bfr__ += IMC::deserialize(byteCount, bfr__, size__);
+	  bfr__ += IMC::deserialize(crc1, bfr__, size__);
+	  bfr__ += IMC::deserialize(args, bfr__, size__);
+	  bfr__ += IMC::deserialize(crc2, bfr__, size__);
+	  return bfr__ - start__;
+	}
+
+	void
+	ThermalCamCommand::fieldsToJSON(std::ostream& os__, unsigned nindent__) const
+	{
+	  IMC::toJSON(os__, "processCode", processCode, nindent__);
+	  IMC::toJSON(os__, "status", status, nindent__);
+	  IMC::toJSON(os__, "function", function, nindent__);
+	  IMC::toJSON(os__, "byteCount", byteCount, nindent__);
+	  IMC::toJSON(os__, "crc1", crc1, nindent__);
+	  IMC::toJSON(os__, "args", args, nindent__);
+	  IMC::toJSON(os__, "crc2", crc2, nindent__);
+	}
+
   }
 }
