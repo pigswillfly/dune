@@ -26,7 +26,7 @@
 //***************************************************************************
 // Automatically generated.                                                 *
 //***************************************************************************
-// IMC XML MD5: bd24744a7b3932c3a956ddc60e9abdd6                            *
+// IMC XML MD5: dfb6dc079c26181fd4318e8cc63b33ea                            *
 //***************************************************************************
 
 #ifndef DUNE_IMC_DEFINITIONS_HPP_INCLUDED_
@@ -6519,6 +6519,73 @@ namespace DUNE
       getName(void) const
       {
         return "Turbidity";
+      }
+
+      unsigned
+      getFixedSerializationSize(void) const
+      {
+        return 4;
+      }
+
+      fp64_t
+      getValueFP(void) const;
+
+      void
+      setValueFP(fp64_t val);
+
+      void
+      fieldsToJSON(std::ostream& os__, unsigned nindent__) const;
+    };
+
+    //! Chlorophyll.
+    class Chlorophyll: public Message
+    {
+    public:
+      //! Value.
+      fp32_t value;
+
+      static uint16_t
+      getIdStatic(void)
+      {
+        return 289;
+      }
+
+      Chlorophyll(void);
+
+      Message*
+      clone(void) const
+      {
+        return new Chlorophyll(*this);
+      }
+
+      void
+      clear(void);
+
+      bool
+      fieldsEqual(const Message& msg__) const;
+
+      int
+      validate(void) const;
+
+      uint8_t*
+      serializeFields(uint8_t* bfr__) const;
+
+      uint16_t
+      deserializeFields(const uint8_t* bfr__, uint16_t size__);
+
+      uint16_t
+      reverseDeserializeFields(const uint8_t* bfr__, uint16_t size__);
+
+      uint16_t
+      getId(void) const
+      {
+        return Chlorophyll::getIdStatic();
+      }
+
+      const char*
+      getName(void) const
+      {
+        return "Chlorophyll";
       }
 
       unsigned
@@ -19141,27 +19208,33 @@ namespace DUNE
       }
     };
 
-    //! Thermal Camera Control
-    class ThermalCamCommand: public Message
+    //! Thermal Camera Control.
+    class ThermalCamControl: public Message
     {
     public:
-      //! Command function
-      uint8_t command;
-      //! Data
+      //! Process code.
+      uint8_t processcode;
+      //! Status.
+      uint8_t status;
+      //! Function.
+      uint8_t function;
+      //! Byte count.
+      uint16_t bytecount;
+      //! Arguments.
       std::vector<char> args;
 
       static uint16_t
       getIdStatic(void)
       {
-        return 1998;
+        return 1991;
       }
 
-      ThermalCamCommand(void);
+      ThermalCamControl(void);
 
       Message*
       clone(void) const
       {
-        return new ThermalCamCommand(*this);
+        return new ThermalCamControl(*this);
       }
 
       void
@@ -19170,6 +19243,9 @@ namespace DUNE
       bool
       fieldsEqual(const Message& msg__) const;
 
+      int
+      validate(void) const;
+
       uint8_t*
       serializeFields(uint8_t* bfr__) const;
 
@@ -19177,21 +19253,24 @@ namespace DUNE
       deserializeFields(const uint8_t* bfr__, uint16_t size__);
 
       uint16_t
+      reverseDeserializeFields(const uint8_t* bfr__, uint16_t size__);
+
+      uint16_t
       getId(void) const
       {
-        return ThermalCamCommand::getIdStatic();
+        return ThermalCamControl::getIdStatic();
       }
 
       const char*
       getName(void) const
       {
-        return "ThermalCamCommand";
+        return "ThermalCamControl";
       }
 
       unsigned
       getFixedSerializationSize(void) const
       {
-        return 1;
+        return 5;
       }
 
       unsigned
@@ -19202,9 +19281,7 @@ namespace DUNE
 
       void
       fieldsToJSON(std::ostream& os__, unsigned nindent__) const;
-
     };
-
   }
 }
 

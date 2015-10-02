@@ -26,7 +26,7 @@
 //***************************************************************************
 // Automatically generated.                                                 *
 //***************************************************************************
-// IMC XML MD5: bd24744a7b3932c3a956ddc60e9abdd6                            *
+// IMC XML MD5: dfb6dc079c26181fd4318e8cc63b33ea                            *
 //***************************************************************************
 
 // ISO C++ 98 headers.
@@ -6466,6 +6466,74 @@ namespace DUNE
 
     void
     Turbidity::fieldsToJSON(std::ostream& os__, unsigned nindent__) const
+    {
+      IMC::toJSON(os__, "value", value, nindent__);
+    }
+
+    Chlorophyll::Chlorophyll(void)
+    {
+      m_header.mgid = 289;
+      clear();
+    }
+
+    void
+    Chlorophyll::clear(void)
+    {
+      value = 0;
+    }
+
+    bool
+    Chlorophyll::fieldsEqual(const Message& msg__) const
+    {
+      const IMC::Chlorophyll& other__ = static_cast<const Chlorophyll&>(msg__);
+      if (value != other__.value) return false;
+      return true;
+    }
+
+    int
+    Chlorophyll::validate(void) const
+    {
+      return false;
+    }
+
+    uint8_t*
+    Chlorophyll::serializeFields(uint8_t* bfr__) const
+    {
+      uint8_t* ptr__ = bfr__;
+      ptr__ += IMC::serialize(value, ptr__);
+      return ptr__;
+    }
+
+    uint16_t
+    Chlorophyll::deserializeFields(const uint8_t* bfr__, uint16_t size__)
+    {
+      const uint8_t* start__ = bfr__;
+      bfr__ += IMC::deserialize(value, bfr__, size__);
+      return bfr__ - start__;
+    }
+
+    uint16_t
+    Chlorophyll::reverseDeserializeFields(const uint8_t* bfr__, uint16_t size__)
+    {
+      const uint8_t* start__ = bfr__;
+      bfr__ += IMC::reverseDeserialize(value, bfr__, size__);
+      return bfr__ - start__;
+    }
+
+    fp64_t
+    Chlorophyll::getValueFP(void) const
+    {
+      return static_cast<fp64_t>(value);
+    }
+
+    void
+    Chlorophyll::setValueFP(fp64_t val)
+    {
+      value = static_cast<fp32_t>(val);
+    }
+
+    void
+    Chlorophyll::fieldsToJSON(std::ostream& os__, unsigned nindent__) const
     {
       IMC::toJSON(os__, "value", value, nindent__);
     }
@@ -19989,77 +20057,84 @@ namespace DUNE
       return 0;
     }
 
-	ThermalCamCommand::ThermalCamCommand(void)
-	{
-	  m_header.mgid = 1991;
-	  clear();
-	}
+    ThermalCamControl::ThermalCamControl(void)
+    {
+      m_header.mgid = 1991;
+      clear();
+    }
 
-	void
-	ThermalCamCommand::clear(void)
-	{
-	  processCode = 0;
-	  status = 0;
-	  function = 0;
-	  byteCount = 0;
-	  crc1 = 0;
-	  args.clear();
-	  crc2 = 0;
-	}
+    void
+    ThermalCamControl::clear(void)
+    {
+      processcode = 0x00;
+      status = 0x00;
+      function = 0x00;
+      bytecount = 0x0000;
+      args.clear();
+    }
 
-	bool
-	ThermalCamCommand::fieldsEqual(const Message& msg__) const
-	{
-	  const IMC::ThermalCamCommand& other__ = static_cast<const ThermalCamCommand&>(msg__);
-	  if (process != other__.processCode) return false;
-	  if (status != other__.status) return false;
-	  if (function != other__.function) return false;
-	  if (byteCount != other__.byteCount) return false;
-	  if (crc1 != other__.crc1) return false;
-	  if (args != other__.args) return false;
-	  if (crc2 != other__.crc2) return false;
-	  return true;
-	}
+    bool
+    ThermalCamControl::fieldsEqual(const Message& msg__) const
+    {
+      const IMC::ThermalCamControl& other__ = static_cast<const ThermalCamControl&>(msg__);
+      if (processcode != other__.processcode) return false;
+      if (status != other__.status) return false;
+      if (function != other__.function) return false;
+      if (bytecount != other__.bytecount) return false;
+      if (args != other__.args) return false;
+      return true;
+    }
 
-	uint8_t*
-	ThermalCamCommand::serializeFields(uint8_t* bfr__) const
-	{
-	  uint8_t* ptr__ = bfr__;
-	  ptr__ += IMC::serialize(processCode, ptr__);
-	  ptr__ += IMC::serialize(status, ptr__);
-	  ptr__ += IMC::serialize(function, ptr__);
-	  ptr__ += IMC::serialize(byteCount, ptr__);
-	  ptr__ += IMC::serialize(crc1, ptr__);
-	  ptr__ += IMC::serialize(args, ptr__);
-	  ptr__ += IMC::serialize(crc2, ptr__);
-	  return ptr__;
-	}
+    int
+    ThermalCamControl::validate(void) const
+    {
+      return false;
+    }
 
-	uint16_t
-	ThermalCamCommand::deserializeFields(const uint8_t* bfr__, uint16_t size__)
-	{
-	  const uint8_t* start__ = bfr__;
-	  bfr__ += IMC::deserialize(processCode, bfr__, size__);
-	  bfr__ += IMC::deserialize(status, bfr__, size__);
-	  bfr__ += IMC::deserialize(function, bfr__, size__);
-	  bfr__ += IMC::deserialize(byteCount, bfr__, size__);
-	  bfr__ += IMC::deserialize(crc1, bfr__, size__);
-	  bfr__ += IMC::deserialize(args, bfr__, size__);
-	  bfr__ += IMC::deserialize(crc2, bfr__, size__);
-	  return bfr__ - start__;
-	}
+    uint8_t*
+    ThermalCamControl::serializeFields(uint8_t* bfr__) const
+    {
+      uint8_t* ptr__ = bfr__;
+      ptr__ += IMC::serialize(processcode, ptr__);
+      ptr__ += IMC::serialize(status, ptr__);
+      ptr__ += IMC::serialize(function, ptr__);
+      ptr__ += IMC::serialize(bytecount, ptr__);
+      ptr__ += IMC::serialize(args, ptr__);
+      return ptr__;
+    }
 
-	void
-	ThermalCamCommand::fieldsToJSON(std::ostream& os__, unsigned nindent__) const
-	{
-	  IMC::toJSON(os__, "processCode", processCode, nindent__);
-	  IMC::toJSON(os__, "status", status, nindent__);
-	  IMC::toJSON(os__, "function", function, nindent__);
-	  IMC::toJSON(os__, "byteCount", byteCount, nindent__);
-	  IMC::toJSON(os__, "crc1", crc1, nindent__);
-	  IMC::toJSON(os__, "args", args, nindent__);
-	  IMC::toJSON(os__, "crc2", crc2, nindent__);
-	}
+    uint16_t
+    ThermalCamControl::deserializeFields(const uint8_t* bfr__, uint16_t size__)
+    {
+      const uint8_t* start__ = bfr__;
+      bfr__ += IMC::deserialize(processcode, bfr__, size__);
+      bfr__ += IMC::deserialize(status, bfr__, size__);
+      bfr__ += IMC::deserialize(function, bfr__, size__);
+      bfr__ += IMC::deserialize(bytecount, bfr__, size__);
+      bfr__ += IMC::deserialize(args, bfr__, size__);
+      return bfr__ - start__;
+    }
 
+    uint16_t
+    ThermalCamControl::reverseDeserializeFields(const uint8_t* bfr__, uint16_t size__)
+    {
+      const uint8_t* start__ = bfr__;
+      bfr__ += IMC::deserialize(processcode, bfr__, size__);
+      bfr__ += IMC::deserialize(status, bfr__, size__);
+      bfr__ += IMC::deserialize(function, bfr__, size__);
+      bfr__ += IMC::reverseDeserialize(bytecount, bfr__, size__);
+      bfr__ += IMC::reverseDeserialize(args, bfr__, size__);
+      return bfr__ - start__;
+    }
+
+    void
+    ThermalCamControl::fieldsToJSON(std::ostream& os__, unsigned nindent__) const
+    {
+      IMC::toJSON(os__, "processcode", processcode, nindent__);
+      IMC::toJSON(os__, "status", status, nindent__);
+      IMC::toJSON(os__, "function", function, nindent__);
+      IMC::toJSON(os__, "bytecount", bytecount, nindent__);
+      IMC::toJSON(os__, "args", args, nindent__);
+    }
   }
 }

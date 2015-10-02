@@ -29,8 +29,6 @@
 #include <DUNE/DUNE.hpp>
 #include <DUNE/Hardware/SerialPort.hpp>
 
-#define WRITE_SIZE 30
-
 namespace ThermalCam
 {
   namespace ControlCommand
@@ -39,17 +37,19 @@ namespace ThermalCam
 
     struct Task: public DUNE::Tasks::Task
     {
-      SerialPort* m_camComs;
-      uint8_t writeBuffer[WRITE_SIZE];
-
+/*      SerialPort* m_camComs;
+      uint8_t writeBuffer[BUFFER_SIZE];
+      uint8_t readBuffer[BUFFER_SIZE];
+      uint8_t writeSize = 0;
+*/
       //! Constructor.
       //! @param[in] name task name.
       //! @param[in] ctx context.
       Task(const std::string& name, Tasks::Context& ctx):
-        DUNE::Tasks::Task(name, ctx),
-        m_camComs(NULL)
+        DUNE::Tasks::Task(name, ctx)
+//        m_camComs(NULL)
       {
-    	  bind<IMC::ThermalCamCommand>(this);
+    	 // bind<IMC::ThermalCamCommand>(this);
       }
 
       ~Task(void)
@@ -80,7 +80,7 @@ namespace ThermalCam
       onResourceAcquisition(void)
       {
     	// how to know name of serial port attached to camera?
-    	  m_camComs = new SerialPort("ttyUSB0", 921600, NULL, NULL, NULL);
+ //   	  m_camComs = new SerialPort("/dev/ttyUSB0", 921600, NULL, NULL, NULL);
       }
 
       //! Initialize resources.
@@ -93,16 +93,15 @@ namespace ThermalCam
       void
       onResourceRelease(void)
       {
-    	  Memory::clear(m_camComs);
+  //  	  Memory::clear(m_camComs);
       }
+/*
 
-      //! Main loop.
       void
-      onMain(void)
+      consume(const IMC::ThermalCamCommand* msg)
       {
-        while (!stopping())
-        {
-          // put IMC::ThermalCamCommand variables into write buffer
+    	  //makeCamProtocol(msg->command, msg->getVariableSerializationSize(), msg->args, writeBuffer);
+    	  // 0x6E00000000008D6893C3
 
           // write command to serial port
           // uint8_t bytesWritten = m_camComs->doWrite(writeBuffer, WRITE_SIZE);
@@ -110,6 +109,16 @@ namespace ThermalCam
           // wait for reply on serial port
 
           // put reply into IMC message and send back
+
+      } */
+
+      //! Main loop.
+      void
+      onMain(void)
+      {
+        while (!stopping())
+        {
+			waitForMessages(1.0);
         }
       }
     };
