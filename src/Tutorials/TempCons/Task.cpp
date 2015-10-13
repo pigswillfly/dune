@@ -113,15 +113,15 @@ namespace Tutorials
 			  Memory::clear(m_writeBuf);
 			}
 
+			// append 16 bit value val to byte buffer buf  BIG ENDIAN
 			void
 			append16(uint16_t val, ByteBuffer *buf)
 			{
-			  uint8_t MSB = (uint8_t)((val & 0xFF00) >> 8);
-			  uint8_t LSB = (uint8_t)(val & 0x00FF);
+			  uint8_t msb = (uint8_t)((val & 0xFF00) >> 8);
+			  uint8_t lsb = (uint8_t)(val & 0x00FF);
 
-			  buf->append(&MSB, 1);
-			  buf->append(&LSB, 1);
-
+			  buf->append(&msb, 1);
+			  buf->append(&lsb, 1);
 
 			}
 
@@ -210,7 +210,6 @@ namespace Tutorials
 			  uint8_t* bufptr = m_readBuf->getBuffer();
 			  int attempts = -1;
 
-
 			  do // crc check
 			  {
 				//inf("CRC check");
@@ -233,7 +232,7 @@ namespace Tutorials
 					m_camComs->flushOutput();
 					ret = m_camComs->write(m_writeBuf->getBuffer(), m_writeBuf->getSize());
 
-				  }while((ret != m_writeBuf->getSize())&&(!stopping()));
+				  }while( (ret != m_writeBuf->getSize()) && (!stopping()) ); // whole write buffer sent check
 
 				  //inf("Reading reply...");
 				  m_readBuf->resetBuffer();
@@ -241,7 +240,7 @@ namespace Tutorials
 				  m_camComs->read(bufptr, 1);
 				  //inf("First byte read: %X", *bufptr);
 
-				}while((*bufptr != 0x6E)&&(!stopping()));
+				}while( (*bufptr != 0x6E) && (!stopping()) ); // process code check
 
 				m_camComs->read(bufptr+1, 7);
 				reply.processcode = *bufptr;
@@ -255,8 +254,8 @@ namespace Tutorials
 				crc1 = get16(bufptr, bufptr+1);
 				bufptr+=2;
 
-				m_camComs->read(bufptr,reply.bytecount+2);
-				for(int i=0; i<reply.bytecount; i++)
+				m_camComs->read(bufptr, reply.bytecount+2);
+				for(int i = 0; i < reply.bytecount; i++)
 				{
 				  reply.args.push_back(*bufptr);
 				  bufptr++;
@@ -265,12 +264,12 @@ namespace Tutorials
 
 				//inf("CRC1 = %X, CRC2 = %X", crc1, crc2);
 				expectedCRC1 = CRCCCITT::compute(m_readBuf->getBuffer(), 6);
-				expectedCRC2 = CRCCCITT::compute(m_readBuf->getBuffer(), 8+reply.bytecount);
+				expectedCRC2 = CRCCCITT::compute(m_readBuf->getBuffer(), 8 + reply.bytecount);
 
-			  }while(((crc2 != expectedCRC2)||(crc1 != expectedCRC1))&&(!stopping()));
+			  }while( ( (crc2 != expectedCRC2) || (crc1 != expectedCRC1) ) && (!stopping()) ); // crc check
 
 			  //dispatch(reply);
-			  inf("Camera reply is %X%X%X%X%X%X%X",
+			  inf("Camera reply (without args) is %X%X%X%X%X%X%X",
 				  reply.processcode,
 				  reply.status,
 				  *(m_readBuf->getBuffer()+2),
