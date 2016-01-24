@@ -36,13 +36,13 @@ namespace Tutorials
 
     struct Task: public DUNE::Tasks::Task
     {
-      ByteBuffer* m_byteBuf;
+      //ByteBuffer* m_byteBuf;
       //! Constructor.
       //! @param[in] name task name.
       //! @param[in] ctx context.
       Task(const std::string& name, Tasks::Context& ctx):
-        DUNE::Tasks::Task(name, ctx),
-        m_byteBuf(NULL)
+        DUNE::Tasks::Task(name, ctx)
+        //m_byteBuf(NULL)
       {
       }
 
@@ -68,7 +68,7 @@ namespace Tutorials
       void
       onResourceAcquisition(void)
       {
-    	m_byteBuf = new ByteBuffer(20);
+    	//m_byteBuf = new ByteBuffer(20);
       }
 
       //! Initialize resources.
@@ -90,7 +90,7 @@ namespace Tutorials
       {
     	while (!(stopping()))
 		{
-			const uint8_t command[] = {0x6E,0,0,0,0,0,0x8D,0x68,0x93,0xC3};
+/*			const uint8_t command[] = {0x6E,0,0,0,0,0,0x8D,0x68,0x93,0xC3};
 			m_byteBuf->write(command,10);
 			uint8_t* bufptr = m_byteBuf->getBuffer();
 			inf("%X%X%X%X%X%X%X%X%X%X",
@@ -103,7 +103,7 @@ namespace Tutorials
 				*(bufptr+6),
 				*(bufptr+7),
 				*(bufptr+8),
-				*(bufptr+9));
+				*(bufptr+9));*/
 			Delay::wait(1.0);
 		}
 

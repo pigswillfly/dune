@@ -25,7 +25,7 @@
 // Author: LizRoy                                                           *
 //***************************************************************************
 
-// DUNE headers.
+/*// DUNE headers.
 #include <DUNE/DUNE.hpp>
 
 namespace Tutorials
@@ -34,7 +34,7 @@ namespace Tutorials
 	{
 		using DUNE_NAMESPACES;
 
-		struct Task: public DUNE::Tasks::Periodic
+		struct Task: public DUNE::Tasks::Task
 		{
 			// Parameters
 
@@ -46,7 +46,7 @@ namespace Tutorials
 			void
 			onEntityReservation(void)
 			{
-				inf("Starting: %s", resolveEntity(getEntityId()).c_str());
+				//inf("Starting: %s", resolveEntity(getEntityId()).c_str());
 			}
 
 			void
@@ -66,4 +66,4 @@ namespace Tutorials
 	}
 }
 
-DUNE_TASK
+DUNE_TASK*/

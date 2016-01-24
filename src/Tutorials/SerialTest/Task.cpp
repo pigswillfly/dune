@@ -38,19 +38,20 @@ namespace Tutorials
 
     struct Task: public DUNE::Tasks::Task
     {
-      SerialPort* m_camComs;
+/*      SerialPort* m_camComs;
       ByteBuffer* m_writeBuf;
-      ByteBuffer* m_readBuf;
+      ByteBuffer* m_readBuf;*/
 
       //! Constructor.
       //! @param[in] name task name.
       //! @param[in] ctx context.
       Task(const std::string& name, Tasks::Context& ctx):
-        DUNE::Tasks::Task(name, ctx),
-        m_camComs(NULL),
+        DUNE::Tasks::Task(name, ctx)
+/*        m_camComs(NULL),
         m_writeBuf(NULL),
-        m_readBuf(NULL)
+        m_readBuf(NULL)*/
       {
+    	// bind IMC message
       }
 
       //! Destructor.
@@ -81,11 +82,11 @@ namespace Tutorials
       void
       onResourceAcquisition(void)
       {
-    	inf("Connecting to serial port...");
+/*    	inf("Connecting to serial port...");
     	m_camComs = new SerialPort("/dev/ttyUSB0", 921600);
     	inf("Connected!");
-    	m_writeBuf = new ByteBuffer(10);
-    	m_readBuf = new ByteBuffer(10);
+    	m_writeBuf = new ByteBuffer(20);
+    	m_readBuf = new ByteBuffer(20);*/
       }
 
       //! Initialize resources.
@@ -98,9 +99,9 @@ namespace Tutorials
       void
       onResourceRelease(void)
       {
-    	Memory::clear(m_camComs);
+/*    	Memory::clear(m_camComs);
     	Memory::clear(m_readBuf);
-    	Memory::clear(m_writeBuf);
+    	Memory::clear(m_writeBuf);*/
       }
 
       //! Main loop.
@@ -109,7 +110,7 @@ namespace Tutorials
       {
     	while (!(stopping()))
 		{
-		  const uint8_t command[] = {0x6E,0,0,0,0,0,0xDF,0xBB,0,0};
+/*		  const uint8_t command[] = {0x6E,0,0,0,0,0,0xDF,0xBB,0,0};
 		  m_writeBuf->write(command,10);
 
 		  inf("Writing to camera...\n");
@@ -132,7 +133,7 @@ namespace Tutorials
 			  *(bufptr+7),
 			  *(bufptr+8),
 			  *(bufptr+9));
-		  Delay::wait(1.0);
+		  Delay::wait(1.0);*/
 		}
       }
     };

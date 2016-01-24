@@ -28,8 +28,8 @@
 #include <DUNE/DUNE.hpp>
 #include <DUNE/Algorithms/CRCCCITT.hpp>
 
-static const uint8_t zero[5] = {0x0, 0x0, 0x0, 0x0, 0x0};
-static const uint8_t validateComms[10] = {0x6E, 0x00, 0x00, 0x00, 0x00, 0x00, 0xDF, 0xBB, 0x00, 0x00};
+//static const uint8_t zero[5] = {0x0, 0x0, 0x0, 0x0, 0x0};
+//static const uint8_t validateComms[10] = {0x6E, 0x00, 0x00, 0x00, 0x00, 0x00, 0xDF, 0xBB, 0x00, 0x00};
 
 namespace Tutorials
 {
@@ -39,24 +39,24 @@ namespace Tutorials
 
 		struct Task: public DUNE::Tasks::Task
 		{
-			// Parameters
+/*			// Parameters
 			std::string m_trg_prod;
 
 			SerialPort* m_camComs;
 			ByteBuffer* m_writeBuf;
-			ByteBuffer* m_readBuf;
+			ByteBuffer* m_readBuf;*/
 
 			Task(const std::string& name, Tasks::Context& ctx):
-		        DUNE::Tasks::Task(name, ctx),
-		        m_camComs(NULL),
+		        DUNE::Tasks::Task(name, ctx)
+/*		        m_camComs(NULL),
 		        m_writeBuf(NULL),
-		        m_readBuf(NULL)
+		        m_readBuf(NULL)*/
 			{
-				param("Target Producer", m_trg_prod)
+/*				param("Target Producer", m_trg_prod)
 				.description("Target producer to read from")
 				.defaultValue("Producer");
 		
-				bind<IMC::ThermalCamControl>(this);
+				bind<IMC::ThermalCamControl>(this);*/
 			}
 
 			~Task(void)
@@ -67,7 +67,7 @@ namespace Tutorials
 			void
 			onResourceAcquisition(void)
 			{
-		    	inf("Connecting to serial port...");
+/*		    	inf("Connecting to serial port...");
 		    	do
 		    	{
 		    	  Delay::wait(1.0);
@@ -101,19 +101,19 @@ namespace Tutorials
 
 		    	}while((crc != 0xDFBB)&&(!stopping()));
 
-		    	inf("Comms validated");
+		    	inf("Comms validated");*/
 			}
 
 			//! Release resources.
 			void
 			onResourceRelease(void)
 			{
-			  Memory::clear(m_camComs);
+/*			  Memory::clear(m_camComs);
 			  Memory::clear(m_readBuf);
-			  Memory::clear(m_writeBuf);
+			  Memory::clear(m_writeBuf);*/
 			}
 
-			// append 16 bit value val to byte buffer buf  BIG ENDIAN
+/*			// append 16 bit value val to byte buffer buf  BIG ENDIAN
 			void
 			append16(uint16_t val, ByteBuffer *buf)
 			{
@@ -129,9 +129,9 @@ namespace Tutorials
 			get16(uint8_t* msb, uint8_t* lsb)
 			{
 			  return ((uint16_t)*msb << 8) | (uint16_t)*lsb;
-			}
+			}*/
 
-			void
+/*			void
 			consume(const IMC::ThermalCamControl* msg)
 			{
 				//if (m_trg_prod = msg.get(SourceEntity))
@@ -161,7 +161,7 @@ namespace Tutorials
 				  }
 
 				  sendCommandAndReadReply();
-/*
+
 				  uint8_t* writeBuf = m_writeBuf->getBuffer();
 				  inf("Write buffer: %X%X%X%X%X%X%X%X%X%X",
 					  *writeBuf,
@@ -196,12 +196,12 @@ namespace Tutorials
 					  *(bufptr+7),
 					  *(bufptr+8),
 					  *(bufptr+9));
-*/
+
 
 				}
-			}
+			}*/
 
-			void
+/*			void
 			sendCommandAndReadReply()
 			{
 			  IMC::ThermalCamControl reply;
@@ -277,7 +277,7 @@ namespace Tutorials
 				  reply.bytecount,
 				  crc1,
 				  crc2);
-			}
+			}*/
 
 			void
 			onMain(void)
