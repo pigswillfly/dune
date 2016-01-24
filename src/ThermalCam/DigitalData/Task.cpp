@@ -1,4 +1,3 @@
-/*
 //***************************************************************************
 // Copyright 2007-2015 Universidade do Porto - Faculdade de Engenharia      *
 // Laboratório de Sistemas e Tecnologia Subaquática (LSTS)                  *
@@ -30,36 +29,37 @@
 #include <DUNE/DUNE.hpp>
 #include <DUNE/Hardware/SerialPort.hpp>
 
-const static int BUFFER_SIZE = 20;
-// maybe need to increase buffer size for read buffer?
+const static uint32_t WIDTH = 640;
+const static uint32_t HEIGHT = 512;
+const static uint32_t BUFFER_SIZE = WIDTH*HEIGHT;
+const static unsigned QUALITY = 50;
 
 namespace ThermalCam
 {
-  namespace ControlCommand
+  namespace DigitalData
   {
     using DUNE_NAMESPACES;
 
     struct Task: public DUNE::Tasks::Task
     {
-      SerialPort* m_camComs;
-      ByteBuffer* m_writeBuf;
+      SerialPort* m_pcbComs;
       ByteBuffer* m_readBuf;
+      Media::JPEGCompressor m_jpeg;
+      IMC::CompressedImage m_frame;
 
       //! Constructor.
       //! @param[in] name task name.
       //! @param[in] ctx context.
       Task(const std::string& name, Tasks::Context& ctx):
         DUNE::Tasks::Task(name, ctx),
-      m_camComs(NULL),
-      m_writeBuf(NULL),
-      m_readBuf(NULL)
+        m_pcbComs(NULL),
+        m_readBuf(NULL)
       {
-    	 bind<IMC::ThermalCamControl>(this);
       }
 
       ~Task(void)
       {
-    	  onResourceRelease();
+    	onResourceRelease();
       }
 
       //! Update internal state with new parameter values.
@@ -84,11 +84,15 @@ namespace ThermalCam
       void
       onResourceAcquisition(void)
       {
-    	m_camComs = new SerialPort("/dev/ttyUSB0", 921600);
-    	// handle error?
+    	m_pcbComs = new SerialPort("/dev/ttyUSB0", 9600); // need testing for baud
+    	// may need to have video streaming USB device driver installed
+    	// custom PCB USB device class = 0xFF, interface class 0x10
 
-    	m_writeBuf = new ByteBuffer(BUFFER_SIZE);
     	m_readBuf = new ByteBuffer(BUFFER_SIZE);
+    	m_jpeg.setInputDimensions(WIDTH, HEIGHT);
+    	m_jpeg.setInputColorSpace(m_jpeg.CS_GRAYSCALE); // don't know?? use gs for now
+    	m_jpeg.setInputColorSpace(m_jpeg.CS_GRAYSCALE);
+
       }
 
       //! Initialize resources.
@@ -101,92 +105,8 @@ namespace ThermalCam
       void
       onResourceRelease(void)
       {
-    	Memory::clear(m_camComs);
+    	Memory::clear(m_pcbComs);
     	Memory::clear(m_readBuf);
-    	Memory::clear(m_writeBuf);
-      }
-
-      void
-      consume(const IMC::ThermalCamControl* msg)
-      {
-    	  // translate IMC message to camera protocol (in m_writeBuf)
-    	  makeCamProtocol(msg);
-
-          // write command to serial port
-          uint8_t bytesWritten = m_camComs->write(m_writeBuf->getBuffer(), m_writeBuf->getSize());
-          // check bytes written
-
-          // wait for reply on serial port
-          waitForReply();
-      }
-
-      // put reply into IMC message and send to ground station
-      void
-      waitForReply()
-      {
-    	IMC::ThermalCamControl msg;
-    	m_readBuf->resetBuffer();
-
-    	// read header from serial port
-    	m_camComs->read(m_readBuf->getBuffer(),8);
-
-    	// put header values in IMC msg
-    	msg.function = *(m_readBuf->getBuffer());
-    	msg.status = *(m_readBuf->getBuffer() + 1);
-    	msg.function = *(m_readBuf->getBuffer() + 3);
-    	msg.bytecount = (uint16_t)((*(m_readBuf->getBuffer()+4) << 8)|(*(m_readBuf->getBuffer()+5)));
-
-    	// check header crc
-    	// get args + body crc according to byte count
-    	m_camComs->read(m_readBuf->getBuffer()+8, msg.bytecount+2);
-    	// put args into IMC msg
-    	for(int i = 0; i < msg.bytecount; i++){
-    	  msg.args.push_back(*(m_readBuf->getBuffer()+8+i));
-    	}
-    	// check msg crc
-    	// set sender of IMC message
-    	msg.setSourceEntity(getEntityId());
-    	// send
-    	dispatch(msg);
-
-    	// return and wait for more commands
-      }
-
-      // translate IMC message to camera protocol
-      void
-      makeCamProtocol(const IMC::ThermalCamControl* msg)
-      {
-    	uint8_t ret = 0;
-    	m_writeBuf->resetBuffer();
-
-    	// get header
-    	const uint8_t header[] = {	msg->processcode,
-    								msg->status,
-    								0x00,
-    								msg->function,
-    								((uint8_t)(msg->bytecount | 0xFF00) >> 8),
-    								((uint8_t)(msg->bytecount | 0x00FF))	};
-
-    	// put into write buffer
-    	m_writeBuf->append(header, 6);
-
-    	// calculate header crc and put into write buffer
-    	uint16_t crc = CRCCCITT::compute(m_writeBuf->getBuffer(),6);
-    	m_writeBuf->append(&((const uint8_t)((crc | 0xFF00) >> 8)), 1);
-    	m_writeBuf->append(&((const uint8_t)(crc | 0x00FF)), 1);
-
-    	// handle args
-		uint8_t nArgs = msg->getVariableSerializationSize();
-		if(nArgs > 0){
-		  m_writeBuf->append((uint8_t*)&msg->args, nArgs);
-		}
-
-		// calculate body header and put into write buffer
-    	crc = CRCCCITT::compute(m_writeBuf->getBuffer(),m_writeBuf->getSize());
-    	m_writeBuf->append(&((const uint8_t)((crc | 0xFF00) >> 8)), 1);
-    	m_writeBuf->append(&((const uint8_t)(crc | 0x00FF)), 1);
-
-    	// return
       }
 
       //! Main loop.
@@ -195,8 +115,19 @@ namespace ThermalCam
       {
         while (!stopping())
         {
-          // wait for ThermalCamControl messages
-          waitForMessages(1.0);
+          // read from USB
+          // is this non-blocking? it needs to be...should happen 9 times per second
+          m_pcbComs->read(m_readBuf->getBuffer(),BUFFER_SIZE);
+
+          // compress received frame
+          m_jpeg.compress(m_readBuf->getBuffer(), QUALITY);
+
+          // put into frame IMC message
+          const char* img = (const char*)(m_jpeg.imageData());
+          m_frame.data.assign(img, img + m_jpeg.imageSize());
+          // frame ID?
+          // send
+          dispatch(m_frame);
         }
       }
     };
@@ -204,4 +135,3 @@ namespace ThermalCam
 }
 
 DUNE_TASK
-*/
